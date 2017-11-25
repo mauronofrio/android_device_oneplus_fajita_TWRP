@@ -32,20 +32,10 @@ on init
     chmod 0664 /dev/ion
     chown system system /dev/ion
 
-on early-fs
-    start setup-decrypt
-
 on fs
     wait /dev/block/platform/soc/1da4000.ufshc
     symlink /dev/block/platform/soc/1da4000.ufshc /dev/block/bootdevice
     install_keyring
-
-on boot
-    # save battery by switching to interactive once booted
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
 
 service qseecomd /sbin/qseecomd
     oneshot
@@ -54,14 +44,10 @@ service qseecomd /sbin/qseecomd
     group root
     seclabel u:r:recovery:s0
 
-# use decryption libraries from /system if available
-service setup-decrypt /sbin/setup_decrypt
-    oneshot
-    disabled
-    user root
-    group root
-    seclabel u:r:recovery:s0
-
-on property:ro.crypto.state=encrypted
-    start qseecomd
-
+on boot
+    # save battery by switching to interactive once booted
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor interactive
+    write /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor interactive
+    start sbinqseecomd
