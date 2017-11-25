@@ -1,5 +1,5 @@
 #
-# Copyright 2016 The Android Open Source Project
+# Copyright (C) 2016 The CyanogenMod Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+#
 # This contains the module build definitions for the hardware-specific
 # components for this device.
 #
@@ -22,9 +23,14 @@
 # bitrot and build breakages. Building a component unconditionally does
 # *not* include it on all devices, so it is safe even with hardware-specific
 # components.
+#
 
 LOCAL_PATH := $(call my-dir)
 
-ifneq ($(filter dumpling,$(TARGET_DEVICE)),)
+ifeq ($(TARGET_DEVICE),dumpling)
+
 include $(call all-makefiles-under,$(LOCAL_PATH))
+
+include $(CLEAR_VARS)
+
 endif
