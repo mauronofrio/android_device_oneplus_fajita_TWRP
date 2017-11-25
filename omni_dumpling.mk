@@ -15,7 +15,7 @@
 #
 
 # Release name
-PRODUCT_RELEASE_NAME := cheeseburger
+PRODUCT_RELEASE_NAME := dumpling
 
 $(call inherit-product, build/target/product/embedded.mk)
 
@@ -27,8 +27,8 @@ PRODUCT_COPY_FILES += \
     bionic/libc/zoneinfo/tzdata:recovery/root/system/usr/share/zoneinfo/tzdata
 
 ## Device identifier. This must come after all inclusions
-PRODUCT_DEVICE := cheeseburger
-PRODUCT_NAME := omni_cheeseburger
+PRODUCT_DEVICE := dumpling
+PRODUCT_NAME := omni_dumpling
 PRODUCT_BRAND := OnePlus
-PRODUCT_MODEL := OnePlus A5000
+PRODUCT_MODEL := OnePlus A5010
 PRODUCT_MANUFACTURER := OnePlus

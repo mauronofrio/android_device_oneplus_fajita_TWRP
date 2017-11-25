@@ -1,21 +1,21 @@
-# android_device_oneplus_cheeseburger
-For building TWRP for OnePlus 5 ONLY
+# android_device_oneplus_dumpling
+For building TWRP for OnePlus 5T ONLY
 
 Kernel Source
 
-https://github.com/katinatez/android_kernel_oneplus_msm8998/commits/QC8998_N_7.1
+https://github.com/OnePlusOSS/android_kernel_oneplus_msm8998/tree/oneplus/QC8998_5T_N_7.1
 
 To compile
 
-. build/envsetup.sh && lunch omni_cheeseburger-userdebug && make -j8 recoveryimage
+. build/envsetup.sh && lunch omni_dumpling-userdebug && make -j8 recoveryimage
 
-The OnePlus 5 (codenamed _"cheeseburger"_) are high-end smartphones from OnePlus.
+The OnePlus 5T (codenamed _"dumpling"_) are high-end smartphones from OnePlus.
 
-OnePlus 5 was announced and released in June 2017.
+OnePlus 5T was announced and released in November 2017.
 
 ## Device specifications
 
-| Device       | OnePlus 5                                       |
+| Device       | OnePlus 5T                                      |
 | -----------: | :---------------------------------------------- |
 | SoC          | Qualcomm MSM8998 Snapdragon 835                 |
 | CPU          | Quad-core 2.45GHz Kryo & quad-core 1.9GHz Kryo  |
@@ -25,10 +25,11 @@ OnePlus 5 was announced and released in June 2017.
 | Storage      | 64GB / 128GB (UFS 2.1 2-LANE Flash)             |
 | Battery      | Non-removable Li-Po 3300 mAh                    |
 | Dimensions   | 152.7 x 74.1 x 7.25 mm                          |
-| Display      | 1920 x 1080 px, 5.5 inches (401 PPI)            |
-| Rear camera  | 16 MPx, f/1.7, 24mm, DCAF autofocus + 20 MPx, f/2.6, 36mm, PDAF autofocus |
-| Front camera | 16 MPx, f/2.0                                   |
+| Display      | 2160 x 1080 (18:9), 6 inch                      |
+| Rear camera 1 | 16MP (IMX 398), 1.12-micron pixels, f/1.7 Dual LED flash, 4K 30 fps, 1080p 60 fps, 720p 120 fps video |
+| Rear camera 2 | 20MP (IMX 376k), 1-micron pixels, f/1.7        |
+| Front camera | 16MP (IMX 371), 1-micron pixels, f/2.0 1080p 30 fps video |
 
 ## Device picture
 
-![OnePlus 5](http://image01.oneplus.cn/ebp/201706/17/291/8dc3e3d2bd22658de5f63eeb27700a83.png "OnePlus 5 in black")
+![OnePlus 5T](https://image01.oneplus.net/shop/201711/16/1850/c2baf281695709898707dd551a05274c_260_0.png "OnePlus 5T in black")
