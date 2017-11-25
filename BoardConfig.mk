@@ -70,7 +70,8 @@ TARGET_COPY_OUT_VENDOR := vendor
 
 # Crypto
 TARGET_HW_DISK_ENCRYPTION := true
-TARGET_CRYPTFS_HW_PATH := $(BOARD_PATH)/cryptfs_hw
+TARGET_CRYPTFS_HW_PATH := vendor/qcom/opensource/cryptfs_hw
+TARGET_RECOVERY_DEVICE_MODULES := libcryptfs_hw
 
 # Recovery
 BOARD_HAS_LARGE_FILESYSTEM := true
