@@ -41,14 +41,10 @@ service qseecomd /sbin/qseecomd
     disabled
     seclabel u:r:recovery:s0
 
-service gatekeeperd /sbin/gatekeeperd /data/misc/gatekeeper
-    disabled
-    seclabel u:r:recovery:s0
-
 on boot
     # save battery by switching to interactive once booted
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
     write /sys/devices/system/cpu/cpu2/online 0
     write /sys/devices/system/cpu/cpu3/online 0
-    start sbinqseecomd
+    start qseecomd
