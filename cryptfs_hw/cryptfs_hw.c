@@ -41,12 +41,6 @@
 #include "keymaster_common.h"
 #include "hardware.h"
 
-#if defined(__LP64__)
-#define QSEECOM_LIBRARY_PATH "/vendor/lib64/libQSEEComAPI.so"
-#else
-#define QSEECOM_LIBRARY_PATH "/vendor/lib/libQSEEComAPI.so"
-#endif
-
 
 // When device comes up or when user tries to change the password, user can
 // try wrong password upto a certain number of times. If user enters wrong
@@ -58,35 +52,31 @@
 #define QSEECOM_UFS_ICE_DISK_ENCRYPTION 3
 #define QSEECOM_SDCC_ICE_DISK_ENCRYPTION 4
 #define MAX_PASSWORD_LEN 32
-#define QCOM_ICE_STORAGE_UFS 1
-#define QCOM_ICE_STORAGE_SDCC 2
+#define QTI_ICE_STORAGE_UFS 1
+#define QTI_ICE_STORAGE_SDCC 2
 
 /* Operations that be performed on HW based device encryption key */
 #define SET_HW_DISK_ENC_KEY 1
 #define UPDATE_HW_DISK_ENC_KEY 2
+#define MAX_DEVICE_ID_LENGTH 4 /* 4 = 3 (MAX_SOC_ID_LENGTH) + 1 */
 
-#define QSEECOM_UP_CHECK_COUNT 10
+static unsigned int cpu_id[] = {
+    239, /* MSM8939 SOC ID */
+};
 
 static int loaded_library = 0;
 static int (*qseecom_create_key)(int, void*);
 static int (*qseecom_update_key)(int, void*, void*);
 static int (*qseecom_wipe_key)(int);
 
-inline void* secure_memset(void* v, int c , size_t n) {
-    volatile unsigned char* p = (volatile unsigned char* )v;
-    while (n--) *p++ = c;
-    return v;
-}
-
-
 static int map_usage(int usage)
 {
     int storage_type = is_ice_enabled();
     if (usage == QSEECOM_DISK_ENCRYPTION) {
-        if (storage_type == QCOM_ICE_STORAGE_UFS) {
+        if (storage_type == QTI_ICE_STORAGE_UFS) {
             return QSEECOM_UFS_ICE_DISK_ENCRYPTION;
         }
-        else if (storage_type == QCOM_ICE_STORAGE_SDCC) {
+        else if (storage_type == QTI_ICE_STORAGE_SDCC) {
             return QSEECOM_SDCC_ICE_DISK_ENCRYPTION ;
         }
     }
@@ -101,7 +91,7 @@ static unsigned char* get_tmp_passwd(const char* passwd)
         tmp_passwd = (unsigned char*)malloc(MAX_PASSWORD_LEN);
         if(tmp_passwd) {
             memset(tmp_passwd, 0, MAX_PASSWORD_LEN);
-            passwd_len = strnlen(passwd, MAX_PASSWORD_LEN);
+            passwd_len = (strlen(passwd) > MAX_PASSWORD_LEN) ? MAX_PASSWORD_LEN : strlen(passwd);
             memcpy(tmp_passwd, passwd, passwd_len);
         } else {
             SLOGE("%s: Failed to allocate memory for tmp passwd \n", __func__);
@@ -112,20 +102,18 @@ static unsigned char* get_tmp_passwd(const char* passwd)
     return tmp_passwd;
 }
 
-static int is_qseecom_up()
+static void wipe_userdata()
 {
-    int i = 0;
-    char value[PROPERTY_VALUE_MAX] = {0};
-
-    for (; i<QSEECOM_UP_CHECK_COUNT; i++) {
-        property_get("sys.keymaster.loaded", value, "");
-        if (!strncmp(value, "true", PROPERTY_VALUE_MAX))
-            return 1;
-        usleep(100000);
+    mkdir("/cache/recovery", 0700);
+    int fd = open("/cache/recovery/command", O_RDWR|O_CREAT|O_TRUNC|O_NOFOLLOW, 0600);
+    if (fd >= 0) {
+        write(fd, "--wipe_data", strlen("--wipe_data") + 1);
+        close(fd);
+    } else {
+        SLOGE("could not open /cache/recovery/command\n");
     }
-    return 0;
+    android_reboot(ANDROID_RB_RESTART2, 0, "recovery");
 }
-
 
 static int load_qseecom_library()
 {
@@ -133,12 +121,11 @@ static int load_qseecom_library()
     if (loaded_library)
         return loaded_library;
 
-    if (!is_qseecom_up()) {
-        SLOGE("Timed out waiting for QSEECom listeners..aborting FDE key operation");
-        return 0;
-    }
-
-    void * handle = dlopen(QSEECOM_LIBRARY_PATH, RTLD_NOW);
+#ifdef __LP64__
+    void * handle = dlopen("/vendor/lib64/libQSEEComAPI.so", RTLD_NOW);
+#else
+    void * handle = dlopen("/vendor/lib/libQSEEComAPI.so", RTLD_NOW);
+#endif
     if(handle) {
         dlerror(); /* Clear any existing error */
         *(void **) (&qseecom_create_key) = dlsym(handle,"QSEECom_create_key");
@@ -181,18 +168,15 @@ static int set_key(const char* currentpasswd, const char* passwd, const char* en
         unsigned char* tmp_currentpasswd = get_tmp_passwd(currentpasswd);
         if(tmp_passwd) {
             if (operation == UPDATE_HW_DISK_ENC_KEY) {
-                if (tmp_currentpasswd) {
+                if (tmp_currentpasswd)
                    err = qseecom_update_key(map_usage(QSEECOM_DISK_ENCRYPTION), tmp_currentpasswd, tmp_passwd);
-                   secure_memset(tmp_currentpasswd, 0, MAX_PASSWORD_LEN);
-                }
             } else if (operation == SET_HW_DISK_ENC_KEY) {
                 err = qseecom_create_key(map_usage(QSEECOM_DISK_ENCRYPTION), tmp_passwd);
             }
             if(err < 0) {
                 if(ERR_MAX_PASSWORD_ATTEMPTS == err)
-                    SLOGI("Maximum wrong password attempts reached, will erase userdata\n");
+                    wipe_userdata();
             }
-            secure_memset(tmp_passwd, 0, MAX_PASSWORD_LEN);
             free(tmp_passwd);
             free(tmp_currentpasswd);
         }
@@ -222,10 +206,65 @@ unsigned int is_hw_disk_encryption(const char* encryption_mode)
     return ret;
 }
 
+int clear_hw_device_encryption_key(void)
+{
+    if (load_qseecom_library())
+        return qseecom_wipe_key(map_usage(QSEECOM_DISK_ENCRYPTION));
+
+    return 0;
+}
+
+/*
+ * By default HW FDE is enabled, if the execution comes to
+ * is_hw_fde_enabled() API then for specific device/soc id,
+ * HW FDE is disabled.
+ */
+#ifdef CONFIG_SWV8_DISK_ENCRYPTION
+unsigned int is_hw_fde_enabled(void)
+{
+    unsigned int device_id = -1;
+    unsigned int array_size;
+    unsigned int status = 1;
+    FILE *fd = NULL;
+    unsigned int i;
+    int ret = -1;
+    char buf[MAX_DEVICE_ID_LENGTH];
+
+    fd = fopen("/sys/devices/soc0/soc_id", "r");
+    if (fd) {
+        ret = fread(buf, 1, MAX_DEVICE_ID_LENGTH, fd);
+        fclose(fd);
+    } else {
+        fd = fopen("/sys/devices/system/soc/soc0/id", "r");
+        if (fd) {
+            ret = fread(buf, 1, MAX_DEVICE_ID_LENGTH, fd);
+            fclose(fd);
+        }
+    }
+
+    if (ret > 0) {
+        device_id = atoi(buf);
+    } else {
+        SLOGE("Failed to read device id");
+        return status;
+    }
+
+    array_size = sizeof(cpu_id) / sizeof(cpu_id[0]);
+    for (i = 0; i < array_size; i++) {
+        if (device_id == cpu_id[i]) {
+            status = 0;
+            break;
+        }
+    }
+
+    return status;
+}
+#else
 unsigned int is_hw_fde_enabled(void)
 {
     return 1;
 }
+#endif
 
 int is_ice_enabled(void)
 {
@@ -238,21 +277,13 @@ int is_ice_enabled(void)
       /* All UFS based devices has ICE in it. So we dont need
        * to check if corresponding device exists or not
        */
-      storage_type = QCOM_ICE_STORAGE_UFS;
+      storage_type = QTI_ICE_STORAGE_UFS;
     } else if (strstr(prop_storage, "sdhc")) {
       if (access("/dev/icesdcc", F_OK) != -1)
-        storage_type = QCOM_ICE_STORAGE_SDCC;
+        storage_type = QTI_ICE_STORAGE_SDCC;
     }
   }
   return storage_type;
-}
-
-int clear_hw_device_encryption_key()
-{
-    if (load_qseecom_library())
-        return qseecom_wipe_key(map_usage(QSEECOM_DISK_ENCRYPTION));
-
-    return 0;
 }
 
 static int get_keymaster_version()
