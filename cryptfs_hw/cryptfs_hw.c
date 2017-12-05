@@ -222,6 +222,11 @@ unsigned int is_hw_disk_encryption(const char* encryption_mode)
     return ret;
 }
 
+unsigned int is_hw_fde_enabled(void)
+{
+    return 1;
+}
+
 int is_ice_enabled(void)
 {
   char prop_storage[PATH_MAX];
