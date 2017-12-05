@@ -25,44 +25,6 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-service servicemanager /sbin/servicemanager
-    disabled
-    user root
-    group root readproc
-    seclabel u:r:recovery:s0
-    writepid /dev/cpuset/system-background/tasks
-
-service keystore /sbin/keystore /data/misc/keystore
-    disabled
-    user root
-    group root drmrpc readproc
-    seclabel u:r:recovery:s0
-    writepid /dev/cpuset/foreground/tasks
-
-service qseecomd /sbin/qseecomd
-    disabled
-    user root
-    group root
-    seclabel u:r:recovery:s0
-
-service servicemanager /sbin/servicemanager
-    disabled
-    user root
-    group root readproc
-    seclabel u:r:recovery:s0
-    writepid /dev/cpuset/system-background/tasks
-
-on init
-    setprop ro.hardware.keystore msm8998
-    setprop ro.hardware.gatekeeper msm8998
-    setprop ro.hardware.bootctrl msm8998
-    chmod 0660 /dev/qseecom
-    chown system drmrpc /dev/qseecom
-    chmod 0664 /dev/ion
-    chown system system /dev/ion
-    start qseecomd
-    start servicemanager
-
 on fs
     wait /dev/block/platform/soc/1da4000.ufshc
     symlink /dev/block/platform/soc/1da4000.ufshc /dev/block/bootdevice
@@ -72,9 +34,12 @@ on fs
     chown system system /dev/ion
     install_keyring
 
+# Separate copy needed to use /sbin/linker64 instead of /system/bin/linker64
+service sbinqseecomd /sbin/qseecomd
+    disabled
+    user root
+    group root
+    seclabel u:r:recovery:s0
+
 on boot
-    # save battery by switching to interactive once booted
-    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor interactive
-    write /sys/devices/system/cpu/cpu2/online 0
-    write /sys/devices/system/cpu/cpu3/online 0
+    start sbinqseecomd
