@@ -77,6 +77,7 @@ TARGET_USERIMAGES_USE_F2FS := true
 TARGET_HW_DISK_ENCRYPTION = true
 TARGET_CRYPTFS_HW_PATH := device/oneplus/dumpling/cryptfs_hw
 TW_INCLUDE_CRYPTO := true
+TARGET_KEYMASTER_WAIT_FOR_QSEE := true
 
 # TWRP specific build flags
 BOARD_HAS_NO_REAL_SDCARD := true
