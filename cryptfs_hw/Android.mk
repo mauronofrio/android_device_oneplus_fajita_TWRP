@@ -20,6 +20,8 @@ LOCAL_SRC_FILES := $(sourceFiles)
 
 LOCAL_MODULE_TAGS       := optional
 LOCAL_MODULE:= libcryptfs_hw
+LOCAL_MODULE_PATH_32 := $(TARGET_OUT_VENDOR)/lib
+LOCAL_MODULE_PATH_64 := $(TARGET_OUT_VENDOR)/lib64
 LOCAL_SHARED_LIBRARIES := $(commonSharedLibraries)
 
 LOCAL_MODULE_OWNER := qcom
