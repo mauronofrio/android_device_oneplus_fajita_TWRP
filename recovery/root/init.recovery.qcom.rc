@@ -32,6 +32,7 @@ on fs
     chown system drmrpc /dev/qseecom
     chmod 0664 /dev/ion
     chown system system /dev/ion
+    # Requires patch https://review.lineageos.org/#/c/176691/ to install_keyring
     install_keyring
 
 # Separate copy needed to use /sbin/linker64 instead of /system/bin/linker64
