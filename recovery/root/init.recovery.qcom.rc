@@ -34,6 +34,12 @@ on fs
     chown system system /dev/ion
     # Requires patch https://review.lineageos.org/#/c/176691/ to install_keyring
     install_keyring
+    
+    # Enable dt2w
+    write /proc/touchpanel/double_tap_enable 1
+    
+    # enable USB OTG support
+    write /sys/class/power_supply/usb/otg_switch 1
 
 # Separate copy needed to use /sbin/linker64 instead of /system/bin/linker64
 service sbinqseecomd /sbin/qseecomd
