@@ -7,9 +7,11 @@ https://github.com/lineageos/android_kernel_oneplus_msm8998/tree/lineage-15.1
 
 ## To compile
 
+export ALLOW_MISSING_DEPENDENCIES=true
+
 . build/envsetup.sh && lunch omni_dumpling-eng
 
-mka recoveryimage
+mka adbd recoveryimage
 
 ## Device specifications
 
