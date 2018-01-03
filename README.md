@@ -1,17 +1,15 @@
 # android_device_oneplus_dumpling
-For building TWRP for OnePlus 5T ONLY
+Tree for building TWRP for OnePlus 5T
 
-Kernel Source
+## Kernel Sources
 
-https://github.com/OnePlusOSS/android_kernel_oneplus_msm8998/tree/oneplus/QC8998_5T_N_7.1
+https://github.com/lineageos/android_kernel_oneplus_msm8998/tree/lineage-15.1
 
-To compile
+## To compile
 
-. build/envsetup.sh && lunch omni_dumpling-userdebug && make -j8 recoveryimage
+. build/envsetup.sh && lunch omni_dumpling-eng
 
-The OnePlus 5T (codenamed _"dumpling"_) are high-end smartphones from OnePlus.
-
-OnePlus 5T was announced and released in November 2017.
+mka recoveryimage
 
 ## Device specifications
 
