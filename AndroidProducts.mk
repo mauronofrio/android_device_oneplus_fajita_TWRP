@@ -15,4 +15,4 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/omni_dumpling.mk
+    $(LOCAL_DIR)/omni_enchilada.mk

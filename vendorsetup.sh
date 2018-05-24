@@ -1,2 +1,2 @@
-add_lunch_combo omni_dumpling-eng
-add_lunch_combo omni_dumpling-userdebug
+add_lunch_combo omni_enchilada-eng
+add_lunch_combo omni_enchilada-userdebug
