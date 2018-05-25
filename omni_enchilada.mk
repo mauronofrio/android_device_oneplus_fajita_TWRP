@@ -22,9 +22,17 @@ $(call inherit-product, build/target/product/embedded.mk)
 # Inherit from our custom product configuration
 $(call inherit-product, vendor/omni/config/common.mk)
 
+# Inherit from hardware-specific part of the product configuration
+$(call inherit-product, device/oneplus/enchilada/device.mk)
+
 ## Device identifier. This must come after all inclusions
 PRODUCT_DEVICE := enchilada
 PRODUCT_NAME := omni_enchilada
 PRODUCT_BRAND := OnePlus
 PRODUCT_MODEL := OnePlus A6000
 PRODUCT_MANUFACTURER := OnePlus
+
+PRODUCT_BUILD_PROP_OVERRIDES += \
+    PRODUCT_NAME=OnePlus6 \
+    BUILD_PRODUCT=OnePlus6 \
+    TARGET_DEVICE=OnePlus6
