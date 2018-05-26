@@ -46,12 +46,9 @@ TARGET_USES_UEFI := true
 
 # Kernel
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.console=ttyMSM0 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 service_locator.enable=1 swiotlb=2048 androidboot.configfs=true androidboot.usbcontroller=a600000.dwc3
-BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+#BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 4096
-BOARD_HASH_TYPE := sha1
-BOARD_KERNEL_TAGS_OFFSET := 0x00000100
-BOARD_RAMDISK_OFFSET := 0x01000000
 TARGET_PREBUILT_KERNEL := device/oneplus/enchilada/prebuilt/Image.gz-dtb
 
 # Platform
@@ -98,9 +95,15 @@ TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_MAX_BRIGHTNESS := 255
 TW_THEME := portrait_hdpi
 TW_NO_SCREEN_TIMEOUT := true
+TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
+TW_RECOVERY_ADDITIONAL_RELINK_FILES := ${OUT}/system/lib64/android.hardware.boot@1.0.so
 
 # Encryption
-PLATFORM_SECURITY_PATCH := 2018-05-01
+#PLATFORM_SECURITY_PATCH := 2018-05-01
+#build/tools/buildinfo.sh
+#echo "ro.build.version.release_orig=16.1.0"
+#echo "ro.build.version.security_patch_orig=2025-12-31"
+#echo "ro.build.date.utc=0"
 TW_INCLUDE_CRYPTO := true
 TARGET_HW_DISK_ENCRYPTION := true
 TW_INCLUDE_FBE := true
