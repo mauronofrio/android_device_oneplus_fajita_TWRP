@@ -47,6 +47,7 @@ TARGET_USES_UEFI := true
 # Kernel
 BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.console=ttyMSM0 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 service_locator.enable=1 swiotlb=2048 androidboot.configfs=true androidboot.usbcontroller=a600000.dwc3
 #BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
+BOARD_KERNEL_CMDLINE += androidboot.fastboot=1
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 4096
 TARGET_PREBUILT_KERNEL := device/oneplus/enchilada/prebuilt/Image.gz-dtb
@@ -74,11 +75,6 @@ TARGET_COPY_OUT_VENDOR := vendor
 # Recovery
 BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_HAS_NO_SELECT_BUTTON := true
-TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-#bootable/recovery/minuitwrp/graphics_drm.cpp
-#if defined(RECOVERY_RGBX)
-#format = DRM_FORMAT_XBGR8888;
-#base_format = GGL_PIXEL_FORMAT_RGBX_8888;
 
 # TWRP specific build flags
 BOARD_HAS_NO_REAL_SDCARD := true
@@ -92,18 +88,15 @@ TW_INCLUDE_NTFS_3G := true
 AB_OTA_UPDATER := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_MAX_BRIGHTNESS := 255
+TW_MAX_BRIGHTNESS := 100
 TW_THEME := portrait_hdpi
-TW_NO_SCREEN_TIMEOUT := true
 TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
 TW_RECOVERY_ADDITIONAL_RELINK_FILES := ${OUT}/system/lib64/android.hardware.boot@1.0.so
+# MTP seems to cause a kernel panic, at least with some kernels, so disable it for now
+TW_EXCLUDE_MTP := true
+TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
+TW_NO_SCREEN_BLANK := true
 
 # Encryption
-#PLATFORM_SECURITY_PATCH := 2018-05-01
-#build/tools/buildinfo.sh
-#echo "ro.build.version.release_orig=16.1.0"
-#echo "ro.build.version.security_patch_orig=2025-12-31"
-#echo "ro.build.date.utc=0"
+PLATFORM_SECURITY_PATCH := 2025-12-31
 TW_INCLUDE_CRYPTO := true
-TARGET_HW_DISK_ENCRYPTION := true
-TW_INCLUDE_FBE := true
