@@ -91,8 +91,6 @@ TW_MAX_BRIGHTNESS := 100
 TW_THEME := portrait_hdpi
 TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
 TW_RECOVERY_ADDITIONAL_RELINK_FILES := ${OUT}/system/lib64/android.hardware.boot@1.0.so
-# MTP seems to cause a kernel panic, at least with some kernels, so disable it for now
-TW_EXCLUDE_MTP := true
 TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 TW_NO_SCREEN_BLANK := true
 
