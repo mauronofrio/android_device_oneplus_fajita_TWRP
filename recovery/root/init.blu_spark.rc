@@ -1,0 +1,46 @@
+# blu_spark extras
+
+on property:sys.post_boot.parsed=1
+    # Tweak IO performance after boot complete
+    write /sys/block/dm-0/queue/scheduler "zen"
+    write /sys/block/dm-1/queue/scheduler "zen"
+    write /sys/block/sda/queue/scheduler "zen"
+    write /sys/block/sde/queue/scheduler "zen"
+    write /sys/block/dm-0/queue/read_ahead_kb 128
+	write /sys/block/dm-0/queue/iostats 1
+	write /sys/block/dm-0/queue/nr_requests 128
+    write /sys/block/dm-1/queue/read_ahead_kb 128
+	write /sys/block/dm-1/queue/iostats 1
+	write /sys/block/dm-1/queue/nr_requests 128
+    write /sys/block/sda/queue/read_ahead_kb 128
+	write /sys/block/sda/queue/iostats 1
+	write /sys/block/sda/queue/nr_requests 128
+    write /sys/block/sde/queue/read_ahead_kb 128
+	write /sys/block/sde/queue/iostats 1
+	write /sys/block/sde/queue/nr_requests 128
+
+    # Disable Adaptive LMK
+    write /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk 0
+
+    # Input boost and stune configuration
+    write /sys/module/cpu_boost/parameters/input_boost_freq "0:1056000 1:0 2:0 3:0 4:0 5:0 6:0 7:0"
+    write /sys/module/cpu_boost/parameters/input_boost_ms 500
+	write /sys/module/cpu_boost/parameters/dynamic_stune_boost 15
+
+    # Configure governor settings for little cluster
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "blu_schedutil"
+    write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/up_rate_limit_us 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/down_rate_limit_us 0
+    write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/iowait_boost_enable 1
+
+    # Configure governor settings for big cluster
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor "blu_schedutil"
+    write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/up_rate_limit_us 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/down_rate_limit_us 0
+    write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/iowait_boost_enable 1
+
+    # Disable scheduler core_ctl
+    write /sys/devices/system/cpu/cpu0/core_ctl/enable 0
+    write /sys/devices/system/cpu/cpu4/core_ctl/enable 0
+
+	write /dev/kmsg "Boot blu_spark completed "
