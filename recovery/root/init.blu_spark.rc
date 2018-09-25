@@ -1,6 +1,6 @@
 # blu_spark extras
 
-on property:sys.post_boot.parsed=1
+on property:sys.boot_completed=1
     # Tweak IO performance after boot complete
     write /sys/block/dm-0/queue/scheduler "zen"
     write /sys/block/dm-1/queue/scheduler "zen"
@@ -27,20 +27,25 @@ on property:sys.post_boot.parsed=1
     write /sys/module/cpu_boost/parameters/input_boost_ms 500
 	write /sys/module/cpu_boost/parameters/dynamic_stune_boost 15
 
+    # Set min cpu freq
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 576000
+    write /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 825600
+
+    # Disable scheduler core_ctl
+    write /sys/devices/system/cpu/cpu0/core_ctl/enable 0
+    write /sys/devices/system/cpu/cpu4/core_ctl/enable 0
+
     # Configure governor settings for little cluster
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "blu_schedutil"
     write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/up_rate_limit_us 0
     write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/down_rate_limit_us 0
-    write /sys/devices/system/cpu/cpu0/cpufreq/blu_schedutil/iowait_boost_enable 1
 
     # Configure governor settings for big cluster
     write /sys/devices/system/cpu/cpu4/cpufreq/scaling_governor "blu_schedutil"
     write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/up_rate_limit_us 0
     write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/down_rate_limit_us 0
-    write /sys/devices/system/cpu/cpu4/cpufreq/blu_schedutil/iowait_boost_enable 1
 
-    # Disable scheduler core_ctl
-    write /sys/devices/system/cpu/cpu0/core_ctl/enable 0
-    write /sys/devices/system/cpu/cpu4/core_ctl/enable 0
+	# OTG on by default
+	write /sys/class/power_supply/usb/otg_switch 1
 
 	write /dev/kmsg "Boot blu_spark completed "
