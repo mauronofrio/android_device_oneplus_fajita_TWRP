@@ -29,7 +29,7 @@ $(call inherit-product, device/oneplus/fajita/device.mk)
 PRODUCT_DEVICE := fajita
 PRODUCT_NAME := omni_fajita
 PRODUCT_BRAND := OnePlus
-PRODUCT_MODEL := OnePlus A6013
+PRODUCT_MODEL := OnePlus A6010
 PRODUCT_MANUFACTURER := OnePlus
 
 PRODUCT_BUILD_PROP_OVERRIDES += \

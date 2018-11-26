@@ -89,7 +89,19 @@ service gatekeeper-1-0 /sbin/android.hardware.gatekeeper@1.0-service-qti
     disabled
     seclabel u:r:recovery:s0
 
-service keymaster-3-0 /sbin/android.hardware.keymaster@3.0-service-qti
+service keymaster-4-0 /sbin/android.hardware.keymaster@4.0-service-qti
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service logd /sbin/logd
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service time_daemon /sbin/time_daemon
     user root
     group root
     disabled
@@ -101,21 +113,27 @@ on boot
     write /sys/devices/platform/soc/c440000.qcom,spmi/spmi-0/spmi0-02/c440000.qcom,spmi:qcom,pmi8998@2:qcom,qpnp-smb2/power_supply/usb/otg_switch 1
 
 on init
+    start logd
     start hwservicemanager
     start boot-1-0
     start prepdecrypt
+    start time_daemon
     #setprop crypto.ready 1
 
 on property:crypto.ready=0
     stop sbinqseecomd
-    stop keymaster-3-0
+    stop keymaster-4-0
     stop gatekeeper-1-0
     stop servicemanager
 
 on property:crypto.ready=1
     start sbinqseecomd
 
-on property:sys.listeners.registered=true
-    start keymaster-3-0
+on property:vendor.sys.listeners.registered=true
+    start keymaster-4-0
     start gatekeeper-1-0
     start servicemanager
+    restart time_daemon
+
+on property:sys.usb.config=mtp,adb
+    restart time_daemon

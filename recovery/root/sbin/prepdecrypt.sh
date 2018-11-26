@@ -86,7 +86,8 @@ cp /v/lib64/libtime_genoff.so /vendor/lib64/
 cp /v/lib64/libkeymasterdeviceutils.so /vendor/lib64/
 cp /v/lib64/libkeymasterprovision.so /vendor/lib64/
 cp /v/lib64/libkeymasterutils.so /vendor/lib64/
-cp /v/lib64/vendor.qti.hardware.tui_comm@1.0_vendor.so /vendor/lib64/
+cp /v/lib64/libqtikeymaster4.so /vendor/lib64/
+cp /v/lib64/vendor.qti.hardware.tui_comm@1.0.so /vendor/lib64/
 cp /v/lib64/hw/bootctrl.sdm845.so /vendor/lib64/hw/
 cp /v/lib64/hw/android.hardware.boot@1.0-impl.so /vendor/lib64/hw/
 cp /v/lib64/hw/android.hardware.gatekeeper@1.0-impl-qti.so /vendor/lib64/hw/
@@ -97,7 +98,7 @@ cp /v/compatibility_matrix.xml /vendor/
 
 relink /v/bin/hw/android.hardware.boot@1.0-service
 relink /v/bin/hw/android.hardware.gatekeeper@1.0-service-qti
-relink /v/bin/hw/android.hardware.keymaster@3.0-service-qti
+relink /v/bin/hw/android.hardware.keymaster@4.0-service-qti
 
 finish
 exit 0
