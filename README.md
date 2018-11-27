@@ -22,18 +22,35 @@ Copyright 2018 - The LineageOS Project.
 
 ## Compile
 
-First checkout minimal twrp with omnirom tree:
+First download omni-9.0 tree:
 
 ```
-repo init -u git://github.com/minimal-manifest-twrp/platform_manifest_twrp_omni.git -b twrp-8.1
+repo init --depth=1 -u https://github.com/omnirom/android.git -b android-9.0
+```
+Then add these string to .repo/manifests/remove.xml
+
+```
+<remove-project name="platform/bootable/recovery" />
+```
+
+Then add these projects to .repo/local_manifests/roomservice.xml (If you don't have it, you can add them to .repo/manifest.xml): 
+
+```xml
+<project name="mauronofrio/android_device_oneplus_fajita" path="device/oneplus/fajita" remote="github" revision="android-9.0" />
+<project name="android_bootable_recovery" path="bootable/recovery" remote="omnirom" revision="android-9.0" />
+<project name="android_external_busybox" path="external/busybox" remote="TeamWin" revision="android-9.0" />
+```
+
+Now you can sync your source:
+
+```
 repo sync
 ```
 
-Then add these projects to .repo/manifest.xml:
+If you want to exclude twrp app you need of this commit: https://gerrit.omnirom.org/#/c/android_bootable_recovery/+/27694/
 
-```xml
-<project path="device/oneplus/fajita" name="mauronofrio/android_device_oneplus_fajita" remote="github" revision="android-8.1" />
-```
+Now you need of this patch to make decryption working: https://gist.github.com/mauronofrio/af29bad34ad87a1a957d193794f0bf5f
+
 
 To make all works you need to modify the buildinfo.sh in build/tools
 echo "ro.build.version.release=$PLATFORM_VERSION"
@@ -42,13 +59,14 @@ to
 echo "ro.build.version.release_orig=$PLATFORM_VERSION"
 echo "ro.build.version.security_patch_orig=$PLATFORM_SECURITY_PATCH"
 
-And you need to increase the PLATFORM_VERSION to 16.1.0 in build/core/version_defaults.mk to override Google's anti-rollback features
+And you need to increase the PLATFORM_VERSION to 16.1.0 in build/core/version_defaults.mk to override Google's anti-rollback features (This actually i don't know if is always needed)
 
 Finally execute these:
 
 ```
 . build/envsetup.sh
-export ALLOW_MISSING_DEPENDENCIES=true # Only if you use minimal twrp tree.
+export ALLOW_MISSING_DEPENDENCIES=true
+export LC_ALL=C
 lunch omni_fajita-eng 
 mka adbd recoveryimage 
 ```
@@ -56,6 +74,6 @@ mka adbd recoveryimage
 To test it:
 
 ```
-fastboot boot out/target/product/enchilada/recovery.img
+fastboot boot out/target/product/fajita/recovery.img
 ```
 ## Thanks
