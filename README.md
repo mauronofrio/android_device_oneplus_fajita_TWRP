@@ -78,4 +78,6 @@ To test it:
 ```
 fastboot boot out/target/product/fajita/recovery.img
 ```
+
+Kernel Source: https://github.com/engstk/op6
 ## Thanks
