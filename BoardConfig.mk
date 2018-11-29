@@ -49,7 +49,7 @@ BOARD_KERNEL_CMDLINE := androidboot.hardware=qcom androidboot.console=ttyMSM0 vi
 BOARD_KERNEL_CMDLINE += skip_override androidboot.fastboot=1
 BOARD_KERNEL_BASE := 0x00000000
 BOARD_KERNEL_PAGESIZE := 4096
-TARGET_PREBUILT_KERNEL := device/oneplus/enchilada/prebuilt/Image.gz-dtb
+TARGET_PREBUILT_KERNEL := device/oneplus/fajita/prebuilt/Image.gz-dtb
 
 # Platform
 TARGET_BOARD_PLATFORM := sdm845
@@ -93,7 +93,6 @@ TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
 TW_RECOVERY_ADDITIONAL_RELINK_FILES := ${OUT}/system/lib64/android.hardware.boot@1.0.so
 TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 TW_NO_SCREEN_BLANK := true
-TW_EXCLUDE_TWRPAPP := true
 
 # Encryption
 PLATFORM_SECURITY_PATCH := 2025-12-31
