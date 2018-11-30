@@ -51,6 +51,8 @@ If you want to exclude twrp app you need of this commit: https://gerrit.omnirom.
 
 To make wipe system works you need of this commit: https://gerrit.omnirom.org/#/c/android_bootable_recovery/+/32714/
 
+If you want to use the notch theme you need of this commit: https://gerrit.omnirom.org/#/c/android_bootable_recovery/+/32963/
+
 Now you need of this patch to make decryption working: https://gist.github.com/mauronofrio/af29bad34ad87a1a957d193794f0bf5f
 
 
