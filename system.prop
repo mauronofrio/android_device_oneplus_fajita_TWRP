@@ -2,5 +2,5 @@ ro.display.series=OnePlus 6T
 ro.product.board=sdm845
 ro.board.platform=sdm845
 ro.build.version.release=9
-ro.build.version.security_patch=2018-11-01
+ro.build.version.security_patch=2025-12-31
 
