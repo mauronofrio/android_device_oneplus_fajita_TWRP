@@ -1,0 +1,16 @@
+Signature-Version: 1.0
+SHA1-Digest-Manifest: QCWCUCcRamzGoOTiTXSQ/1AKdMo=
+Created-By: 1.0 (Android SignApk)
+
+Name: ramdisk-twrp.cpio
+SHA1-Digest: GrJjW1FsLNiJC5RX2CIqEmX8eI4=
+
+Name: META-INF/com/android/otacert
+SHA1-Digest: QW7yPFUPbhU0tUYKW4i2EdneCnw=
+
+Name: META-INF/com/google/android/update-binary
+SHA1-Digest: 02Ul88djHsIFRsI5gdyIcSLa0XQ=
+
+Name: magiskboot
+SHA1-Digest: 0fk+6jdh3EAyaBFFHavgeVhRFDc=
+
