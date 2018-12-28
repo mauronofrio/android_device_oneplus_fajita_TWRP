@@ -107,6 +107,9 @@ TW_NO_SCREEN_BLANK := true
 TW_USE_TOOLBOX := true
 TW_NO_LEGACY_PROPS := true
 
+# Use mke2fs to create ext4 images
+TARGET_USES_MKE2FS := true
+
 # A/B updater updatable partitions list. Keep in sync with the partition list
 # with "_a" and "_b" variants in the device. Note that the vendor can add more
 # more partitions to this list for the bootloader and radio.
