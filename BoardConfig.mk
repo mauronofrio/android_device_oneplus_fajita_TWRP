@@ -97,6 +97,7 @@ AB_OTA_UPDATER := true
 BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_MAX_BRIGHTNESS := 1023 
+TW_DEFAULT_BRIGHTNESS := 420
 # set portrait_hdpi_notch to use the notch theme (and finally see the clock)
 TW_THEME := portrait_hdpi_notch  
 TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
