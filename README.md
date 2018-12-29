@@ -37,7 +37,7 @@ Then add these projects to .repo/local_manifests/roomservice.xml (If you don't h
 
 ```xml
 <project name="mauronofrio/android_device_oneplus_fajita" path="device/oneplus/fajita" remote="github" revision="android-9.0" />
-<project name="android_bootable_recovery" path="bootable/recovery" remote="omnirom" revision="android-9.0" />
+<project name="mauronofrio/android_bootable_recovery" path="bootable/recovery" remote="github" revision="android-9.0" />
 <project name="android_external_busybox" path="external/busybox" remote="TeamWin" revision="android-9.0" />
 ```
 
@@ -46,12 +46,7 @@ Now you can sync your source:
 ```
 repo sync
 ```
-
-If you want to exclude twrp app you need of this commit: https://gerrit.omnirom.org/#/c/android_bootable_recovery/+/27694/
-
-To make wipe system works you need of this commit: https://gerrit.omnirom.org/#/c/android_bootable_recovery/+/32714/
-
-If you want to use the notch theme you need of this commit: https://gerrit.omnirom.org/#/c/android_bootable_recovery/+/32963/
+Actually i'm using this bootable/recovery: https://github.com/mauronofrio/android_bootable_recovery
 
 Now you need of this patch to make decryption working: https://gist.github.com/mauronofrio/af29bad34ad87a1a957d193794f0bf5f
 
@@ -83,5 +78,6 @@ To test it:
 fastboot boot out/target/product/fajita/recovery.img
 ```
 
-Kernel Source: https://github.com/engstk/op6
-## Thanks
+Kernel Source: https://github.com/pappschlumpf/op6/tree/9.0
+## Credits
+I want to say a big thanks to @twinnfamous
