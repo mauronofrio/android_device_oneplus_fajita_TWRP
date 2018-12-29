@@ -30,6 +30,7 @@ syspath="/dev/block/bootdevice/by-name/system$suffix"
 mkdir /s
 mount -t ext4 -o ro "$syspath" /s
 
+device_codename=$(getprop ro.boot.hardware)
 is_fastboot_twrp=$(getprop ro.boot.fastboot)
 if [ ! -z "$is_fastboot_twrp" ]; then
 	osver=$(getprop ro.build.version.release_orig)

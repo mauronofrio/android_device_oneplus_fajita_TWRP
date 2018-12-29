@@ -25,16 +25,16 @@
 
 # Architecture
 TARGET_ARCH := arm64
-TARGET_ARCH_VARIANT := armv8-a
+TARGET_ARCH_VARIANT := armv8-2a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
-TARGET_CPU_VARIANT := kryo
+TARGET_CPU_VARIANT := cortex-a75
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv7-a-neon
+TARGET_2ND_ARCH_VARIANT := armv8-a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
-TARGET_2ND_CPU_VARIANT := cortex-a53
+TARGET_2ND_CPU_VARIANT := cortex-a75
 
 ENABLE_CPUSETS := true
 ENABLE_SCHEDBOOST := true
@@ -54,6 +54,7 @@ TARGET_PREBUILT_KERNEL := device/oneplus/fajita/prebuilt/Image.gz-dtb
 # Platform
 TARGET_BOARD_PLATFORM := sdm845
 TARGET_BOARD_PLATFORM_GPU := qcom-adreno630
+QCOM_BOARD_PLATFORMS += sdm845
 
 # Partitions
 BOARD_FLASH_BLOCK_SIZE := 262144
@@ -78,6 +79,7 @@ BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 TARGET_RECOVERY_WIPE := device/oneplus/fajita/recovery.wipe
 TARGET_RECOVERY_FSTAB := device/oneplus/fajita/fstab.hardware
 
+
 # Workaround for error copying vendor files to recovery ramdisk
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_COPY_OUT_VENDOR := vendor
@@ -90,21 +92,18 @@ BOARD_HAS_NO_SELECT_BUTTON := true
 BOARD_HAS_NO_REAL_SDCARD := true
 RECOVERY_SDCARD_ON_DATA := true
 TARGET_RECOVERY_QCOM_RTC_FIX := true
-TW_BRIGHTNESS_PATH := "/sys/class/backlight/panel0-backlight/brightness"
+TW_BRIGHTNESS_PATH := "/sys/class/backlight/pane10-backlight/brightness"
 TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_EXCLUDE_SUPERSU := true
 TW_EXTRA_LANGUAGES := true
 TW_INCLUDE_NTFS_3G := true
 AB_OTA_UPDATER := true
-BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
-TW_MAX_BRIGHTNESS := 1023 
+TW_MAX_BRIGHTNESS := 1023
 TW_DEFAULT_BRIGHTNESS := 420
-# set portrait_hdpi_notch to use the notch theme (and finally see the clock)
-TW_THEME := portrait_hdpi_notch  
+TW_THEME := portrait_hdpi_notch
 TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
-#TW_RECOVERY_ADDITIONAL_RELINK_FILES := ${OUT}/system/lib64/android.hardware.boot@1.0.so
-TARGET_USE_CUSTOM_LUN_FILE_PATH := "/config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file"
+TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
 TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 TW_NO_SCREEN_BLANK := true
 TW_USE_TOOLBOX := true
@@ -131,6 +130,6 @@ TW_INCLUDE_CRYPTO_FBE := true
 # Extras
 BOARD_SUPPRESS_SECURE_ERASE := true
 TW_USE_LEDS_HAPTICS := true
-TW_EXCLUDE_TWRPAPP := true
 USE_RECOVERY_INSTALLER := true
 RECOVERY_INSTALLER_PATH := device/oneplus/fajita/installer
+TW_EXCLUDE_TWRPAPP := true

@@ -4,6 +4,7 @@ LOCAL_PATH := device/oneplus/fajita
 # define hardware platform
 PRODUCT_PLATFORM := sdm845
 
+#TEST
 # A/B support
 PRODUCT_PACKAGES += \
     otapreopt_script \
@@ -28,7 +29,11 @@ PRODUCT_STATIC_BOOT_CONTROL_HAL := \
     libz \
     libcutils
 
+
 # Boot control HAL
 PRODUCT_PACKAGES += \
     android.hardware.boot@1.0-impl \
-    android.hardware.boot@1.0-service
+    android.hardware.boot@1.0-service \
+
+
+
