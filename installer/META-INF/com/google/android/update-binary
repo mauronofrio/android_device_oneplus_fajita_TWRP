@@ -1,39 +1,27 @@
 #!/sbin/sh
 # LazyFlasher installer backend (for helper functions only)
 
-tmp=/tmp/twrp-install
+tmp=/dev/tmp/twrp-install
+
+# detect when flashing in Magisk Manager
+ps | grep zygote | grep -v grep >/dev/null && BOOTMODE=true || BOOTMODE=false;
+$BOOTMODE || ps -A 2>/dev/null | grep zygote | grep -v grep >/dev/null && BOOTMODE=true;
 
 if [ "$3" ]; then
 	zip=$3
 	console=/proc/$$/fd/$2
-	# write the location of the console buffer to /tmp/console for other scripts to use
-	echo "$console" > /tmp/console
-else
-	console=$(cat /tmp/console)
-	[ "$console" ] || console=/proc/$$/fd/1
 fi
 
 print() {
-	if [ "$1" ]; then
-		echo "ui_print $1" > "$console"
+	if $BOOTMODE; then
+		echo "$1"
 	else
-		echo "ui_print  " > "$console"
+		if [ "$1" ]; then
+			echo "ui_print $1" > "$console"
+		else
+			echo "ui_print  " > "$console"
+		fi
 	fi
-	echo
-}
-
-abort() {
-	[ "$1" ] && {
-		print "Error: $1"
-		print "Aborting..."
-	}
-	cleanup
-	print "Failed to patch boot image!"
-	exit 1
-}
-
-cleanup() {
-	[ "$zip" ] && rm /tmp/console
 }
 
 extract() {
@@ -42,15 +30,17 @@ extract() {
 	unzip -o "$1" -d "$2" || abort "Failed to extract zip to $2!"
 }
 
-print "#########################################"
-print "#     TWRP installer for OnePlus 6T     #"
-print "#             by mauronofrio            #"
-print "#########################################"
+print "########################################"
+print "#     TWRP installer for OnePlus6T     #"
+print "#            by mauronofrio            #"
+print "########################################"
+print
 
 # Unpack the installer
 [ "$zip" ] && {
 	print "Unpacking the installer..."
 	extract "$zip" "$tmp"
+	print
 }
 cd "$tmp"
 toolname="/magiskboot"
@@ -60,25 +50,31 @@ target="$tmp$targetfile"
 
 chmod 755 "$tool"
 
-print "Running boot image patcher on slot A..."
-dd if=/dev/block/bootdevice/by-name/boot_a "of=$target"
-"$tool" --unpack boot.img
-cp -f ramdisk-recovery.cpio ramdisk.cpio
-"$tool" --repack boot.img
-dd if=new-boot.img of=/dev/block/bootdevice/by-name/boot_a
-rm boot.img
-rm dtb
-rm kernel
-rm new-boot.img
-rm ramdisk.cpio
-print "Running boot image patcher on slot B..."
-dd if=/dev/block/bootdevice/by-name/boot_b "of=$target"
-"$tool" --unpack boot.img
-cp -f ramdisk-recovery.cpio ramdisk.cpio
-"$tool" --repack boot.img
-dd if=new-boot.img of=/dev/block/bootdevice/by-name/boot_b
+for slot in a b; do
+	print "Running boot image patcher on slot $slot..."
+	dd if=/dev/block/bootdevice/by-name/boot_$slot "of=$target"
+	"$tool" --unpack boot.img
+	# kernel string want_initramfs -> skip_initramfs (Magisk)
+	"$tool" --hexpatch kernel 77616E745F696E697472616D6673 736B69705F696E697472616D6673
+	# kernel string trip_initramfs -> skip_initramfs (SuperSU)
+	"$tool" --hexpatch kernel 747269705F696E697472616D6673 736B69705F696E697472616D6673
+	cp -f ramdisk-recovery.cpio ramdisk.cpio
+	"$tool" --repack boot.img
+	# boot.img cmdline skip_override -> '             ' (flar2 patch)
+	"$tool" --hexpatch new-boot.img 736B69705F6F76657272696465 20202020202020202020202020
+	dd if=new-boot.img of=/dev/block/bootdevice/by-name/boot_$slot
 
-print "Boot image patching complete"
+	"$tool" --cleanup
+	rm -f new-boot.img
+done
 
-#cleanup
+print
+print "Boot image patching complete!"
+
+cd /
+rm -rf /dev/tmp
+
+print
 print "Done installing TWRP!"
+print
+print "*** NOTE: You are now unrooted! ***"
