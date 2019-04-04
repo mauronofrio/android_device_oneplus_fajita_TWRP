@@ -1,5 +1,6 @@
 #!/sbin/sh
 # LazyFlasher installer backend (for helper functions only)
+# Heavily modified by Dees_Troy and osm0sis
 
 tmp=/dev/tmp/twrp-install
 
@@ -36,7 +37,7 @@ print "#            by mauronofrio            #"
 print "########################################"
 print
 
-# Unpack the installer
+# unpack the installer
 [ "$zip" ] && {
 	print "Unpacking the installer..."
 	extract "$zip" "$tmp"
@@ -47,24 +48,28 @@ toolname="/magiskboot"
 tool="$tmp$toolname"
 targetfile="/boot.img"
 target="$tmp$targetfile"
+recoverycpio=`(ls ramdisk-twrp.cpio || ls ramdisk-recovery.cpio) 2>/dev/null`
 
 chmod 755 "$tool"
 
 for slot in a b; do
 	print "Running boot image patcher on slot $slot..."
 	dd if=/dev/block/bootdevice/by-name/boot_$slot "of=$target"
-	"$tool" --unpack boot.img
+	"$tool" unpack -h boot.img
+
 	# kernel string want_initramfs -> skip_initramfs (Magisk)
-	"$tool" --hexpatch kernel 77616E745F696E697472616D6673 736B69705F696E697472616D6673
+	"$tool" hexpatch kernel 77616E745F696E697472616D6673 736B69705F696E697472616D6673
 	# kernel string trip_initramfs -> skip_initramfs (SuperSU)
-	"$tool" --hexpatch kernel 747269705F696E697472616D6673 736B69705F696E697472616D6673
-	cp -f ramdisk-recovery.cpio ramdisk.cpio
-	"$tool" --repack boot.img
-	# boot.img cmdline skip_override -> '             ' (flar2 patch)
-	"$tool" --hexpatch new-boot.img 736B69705F6F76657272696465 20202020202020202020202020
+	"$tool" hexpatch kernel 747269705F696E697472616D6673 736B69705F696E697472616D6673
+
+	# boot.img cmdline remove skip_override (flar2 patch)
+	sed -i "s|$(grep '^cmdline=' header | cut -d= -f2-)|$(grep '^cmdline=' header | cut -d= -f2- | sed -e 's/skip_override//' -e 's/  */ /g' -e 's/[ \t]*$//')|" header
+
+	cp -f $recoverycpio ramdisk.cpio
+	"$tool" repack boot.img
 	dd if=new-boot.img of=/dev/block/bootdevice/by-name/boot_$slot
 
-	"$tool" --cleanup
+	"$tool" cleanup
 	rm -f new-boot.img
 done
 
