@@ -77,7 +77,7 @@ BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 
 # Partitions (listed in the file) to be wiped under recovery.
 TARGET_RECOVERY_WIPE := device/oneplus/fajita/recovery.wipe
-TARGET_RECOVERY_FSTAB := device/oneplus/fajita/fstab.hardware
+TARGET_RECOVERY_FSTAB := device/oneplus/fajita/recovery.fstab
 
 
 # Workaround for error copying vendor files to recovery ramdisk
@@ -101,13 +101,12 @@ AB_OTA_UPDATER := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_MAX_BRIGHTNESS := 1023
 TW_DEFAULT_BRIGHTNESS := 420
-TW_THEME := portrait_hdpi_notch
+TW_THEME := portrait_hdpi
 TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
 TARGET_RECOVERY_PIXEL_FORMAT := BGRA_8888
 TW_NO_SCREEN_BLANK := true
 TW_USE_TOOLBOX := true
-TW_NO_LEGACY_PROPS := true
 
 # Use mke2fs to create ext4 images
 TARGET_USES_MKE2FS := true
@@ -125,7 +124,7 @@ AB_OTA_PARTITIONS += \
 # Encryption
 PLATFORM_SECURITY_PATCH := 2025-12-31
 TW_INCLUDE_CRYPTO := true
-TW_INCLUDE_CRYPTO_FBE := true
+#TW_INCLUDE_CRYPTO_FBE := true
 
 # Extras
 BOARD_SUPPRESS_SECURE_ERASE := true
@@ -133,3 +132,7 @@ TW_USE_LEDS_HAPTICS := true
 USE_RECOVERY_INSTALLER := true
 RECOVERY_INSTALLER_PATH := device/oneplus/fajita/installer
 TW_EXCLUDE_TWRPAPP := true
+TW_INCLUDE_REPACKTOOLS := true
+TW_Y_OFFSET := 80
+TW_H_OFFSET := -80
+TW_HAS_EDL_MODE := true

@@ -118,7 +118,7 @@ on init
     start boot-1-0
     start prepdecrypt
     start time_daemon
-    #setprop crypto.ready 1
+    setprop crypto.ready 1
 
 on property:crypto.ready=0
     stop sbinqseecomd
