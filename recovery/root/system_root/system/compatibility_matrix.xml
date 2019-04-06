@@ -245,7 +245,6 @@
     </hal>
     <hal format="hidl" optional="false">
         <name>android.hardware.keymaster</name>
-        <version>3.0</version>
         <version>4.0</version>
         <interface>
             <name>IKeymasterDevice</name>
