@@ -79,7 +79,6 @@ BOARD_BUILD_SYSTEM_ROOT_IMAGE := true
 TARGET_RECOVERY_WIPE := device/oneplus/fajita/recovery.wipe
 TARGET_RECOVERY_FSTAB := device/oneplus/fajita/recovery.fstab
 
-
 # Workaround for error copying vendor files to recovery ramdisk
 BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
 TARGET_COPY_OUT_VENDOR := vendor
@@ -101,6 +100,8 @@ AB_OTA_UPDATER := true
 TW_INPUT_BLACKLIST := "hbtp_vm"
 TW_MAX_BRIGHTNESS := 1023
 TW_DEFAULT_BRIGHTNESS := 420
+TW_Y_OFFSET := 80
+TW_H_OFFSET := -80
 TW_THEME := portrait_hdpi
 TARGET_RECOVERY_DEVICE_MODULES += android.hardware.boot@1.0
 TARGET_USE_CUSTOM_LUN_FILE_PATH := /config/usb_gadget/g1/functions/mass_storage.0/lun.%d/file
@@ -122,7 +123,7 @@ AB_OTA_PARTITIONS += \
     dtbo 
 
 # Encryption
-PLATFORM_SECURITY_PATCH := 2025-12-31
+PLATFORM_SECURITY_PATCH := 2099-12-31
 TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
 
@@ -133,6 +134,9 @@ USE_RECOVERY_INSTALLER := true
 RECOVERY_INSTALLER_PATH := device/oneplus/fajita/installer
 TW_EXCLUDE_TWRPAPP := true
 TW_INCLUDE_REPACKTOOLS := true
-TW_Y_OFFSET := 80
-TW_H_OFFSET := -80
 TW_HAS_EDL_MODE := true
+TWRP_INCLUDE_LOGCAT := true
+TARGET_USES_LOGD := true
+TW_EXCLUDE_TWRPAPP := true
+TW_NO_USB_STORAGE := true
+PLATFORM_VERSION := 16.1.0

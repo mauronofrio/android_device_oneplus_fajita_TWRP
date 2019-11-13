@@ -30,11 +30,17 @@ on fs
     symlink /dev/block/platform/soc/${ro.boot.bootdevice} /dev/block/bootdevice
     symlink /dev/block/bootdevice/by-name/oem_stanvbk /dev/block/bootdevice/by-name/oem_stanvbk_a
     symlink /dev/block/bootdevice/by-name/oem_stanvbk /dev/block/bootdevice/by-name/oem_stanvbk_b
+    symlink /dev/block/bootdevice/by-name/oem_dycnvbk /dev/block/bootdevice/by-name/oem_dycnvbk_a
+    symlink /dev/block/bootdevice/by-name/oem_dycnvbk /dev/block/bootdevice/by-name/oem_dycnvbk_b
+
     chmod 0660 /dev/qseecom
     chown system drmrpc /dev/qseecom
     chmod 0664 /dev/ion
     chown system system /dev/ion
     install_keyring
+
+on early-fs
+    start vold
 
 # Separate copy needed to use /sbin/linker64 instead of /system/bin/linker64
 service sbinqseecomd /sbin/qseecomd
@@ -107,6 +113,13 @@ service time_daemon /sbin/time_daemon
     disabled
     seclabel u:r:recovery:s0
 
+service patchreserve /sbin/patchreserve.sh
+    user root
+    group root
+    disabled
+    oneshot
+    seclabel u:r:recovery:s0
+
 service patchreserve-service /sbin/patchreserve-service.sh
     user root
     group root
@@ -120,7 +133,7 @@ service ldconfigtxt /sbin/touch /sbin/ld.config.txt
     seclabel u:r:recovery:s0
 
 on boot
-	export LD_CONFIG_FILE /sbin/ld.config.txt
+    export LD_CONFIG_FILE /sbin/ld.config.txt
     setprop sys.usb.config adb
     write /proc/touchpanel/gesture_enable 1
     write /sys/devices/platform/soc/c440000.qcom,spmi/spmi-0/spmi0-02/c440000.qcom,spmi:qcom,pmi8998@2:qcom,qpnp-smb2/power_supply/usb/otg_switch 1

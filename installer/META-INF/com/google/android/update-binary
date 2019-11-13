@@ -1,85 +1,70 @@
 #!/sbin/sh
-# LazyFlasher installer backend (for helper functions only)
-# Heavily modified by Dees_Troy and osm0sis
+# TWRP A/B Installer Backend
+# by osm0sis, Dees_Troy and topjohnwu
 
-tmp=/dev/tmp/twrp-install
+OUTFD=/proc/self/fd/$2;
+ZIPFILE="$3";
 
-# detect when flashing in Magisk Manager
+ui_print() { $BOOTMODE && echo "$1" || echo -e "ui_print $1\nui_print" >> $OUTFD; }
+abort() { ui_print "$1"; exit 1; }
+
+# detect Magisk Manager/booted flashing
 ps | grep zygote | grep -v grep >/dev/null && BOOTMODE=true || BOOTMODE=false;
 $BOOTMODE || ps -A 2>/dev/null | grep zygote | grep -v grep >/dev/null && BOOTMODE=true;
 
-if [ "$3" ]; then
-	zip=$3
-	console=/proc/$$/fd/$2
-fi
+ui_print "########################################";
+ui_print "#    TWRP installer for OnePlus 6T     #";
+ui_print "#            by Mauronofrio            #";
+ui_print "########################################";
+ui_print " ";
 
-print() {
-	if $BOOTMODE; then
-		echo "$1"
-	else
-		if [ "$1" ]; then
-			echo "ui_print $1" > "$console"
-		else
-			echo "ui_print  " > "$console"
-		fi
-	fi
-}
+# /dev/tmp is safe for both booted and recovery installs
+tmp=/dev/tmp/twrp-install;
+# target partition without the slot suffix
+target=/dev/block/bootdevice/by-name/boot;
 
-extract() {
-	rm -rf "$2"
-	mkdir -p "$2"
-	unzip -o "$1" -d "$2" || abort "Failed to extract zip to $2!"
-}
+ui_print "Unpacking the installer...";
+ui_print " ";
+rm -rf $tmp;
+mkdir -p $tmp;
+unzip -o "$ZIPFILE" -d $tmp || abort "Failed to extract zip!";
 
-print "########################################"
-print "#     TWRP installer for OnePlus6T     #"
-print "#            by mauronofrio            #"
-print "########################################"
-print
+cd $tmp;
+tool=$tmp/magiskboot;
+recoverycpio=`(ls ramdisk-twrp.cpio || ls ramdisk-recovery.cpio) 2>/dev/null`;
+test "$recoverycpio" || abort "No TWRP ramdisk cpio found!";
 
-# unpack the installer
-[ "$zip" ] && {
-	print "Unpacking the installer..."
-	extract "$zip" "$tmp"
-	print
-}
-cd "$tmp"
-toolname="/magiskboot"
-tool="$tmp$toolname"
-targetfile="/boot.img"
-target="$tmp$targetfile"
-recoverycpio=`(ls ramdisk-twrp.cpio || ls ramdisk-recovery.cpio) 2>/dev/null`
-
-chmod 755 "$tool"
+chmod 755 $tool;
 
 for slot in a b; do
-	print "Running boot image patcher on slot $slot..."
-	dd if=/dev/block/bootdevice/by-name/boot_$slot "of=$target"
-	"$tool" unpack -h boot.img
+  ui_print "Running boot image patcher on slot $slot...";
+  slot=_$slot;
+  dd bs=1048576 if=$target$slot of=boot.img;
+  $tool unpack -h boot.img;
 
-	# kernel string want_initramfs -> skip_initramfs (Magisk)
-	"$tool" hexpatch kernel 77616E745F696E697472616D6673 736B69705F696E697472616D6673
-	# kernel string trip_initramfs -> skip_initramfs (SuperSU)
-	"$tool" hexpatch kernel 747269705F696E697472616D6673 736B69705F696E697472616D6673
+  # kernel string want_initramfs -> skip_initramfs (Magisk)
+  $tool hexpatch kernel 77616E745F696E697472616D6673 736B69705F696E697472616D6673;
+  # kernel string trip_initramfs -> skip_initramfs (SuperSU)
+  $tool hexpatch kernel 747269705F696E697472616D6673 736B69705F696E697472616D6673;
 
-	# boot.img cmdline remove skip_override (flar2 patch)
-	sed -i "s|$(grep '^cmdline=' header | cut -d= -f2-)|$(grep '^cmdline=' header | cut -d= -f2- | sed -e 's/skip_override//' -e 's/  */ /g' -e 's/[ \t]*$//')|" header
+  # boot.img header cmdline remove skip_override (flar2 patch)
+  sed -i "s|$(grep '^cmdline=' header | cut -d= -f2-)|$(grep '^cmdline=' header | cut -d= -f2- | sed -e 's/skip_override//' -e 's/  */ /g' -e 's/[ \t]*$//')|" header;
 
-	cp -f $recoverycpio ramdisk.cpio
-	"$tool" repack boot.img
-	dd if=new-boot.img of=/dev/block/bootdevice/by-name/boot_$slot
+  cp -f $recoverycpio ramdisk.cpio;
+  $tool repack boot.img;
+  cat new-boot.img /dev/zero > $target$slot 2>/dev/null || true;
 
-	"$tool" cleanup
-	rm -f new-boot.img
-done
+  $tool cleanup;
+  rm -f new-boot.img;
+done;
 
-print
-print "Boot image patching complete!"
+ui_print " ";
+ui_print "Boot image patching complete!";
 
-cd /
-rm -rf /dev/tmp
+cd /;
+rm -rf /dev/tmp;
 
-print
-print "Done installing TWRP!"
-print
-print "*** NOTE: You are now unrooted! ***"
+ui_print " ";
+ui_print "Done installing TWRP!";
+ui_print " ";
+ui_print "*** NOTE: You are now unrooted! ***";
