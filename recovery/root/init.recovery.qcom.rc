@@ -120,7 +120,7 @@ service patchreserve /sbin/patchreserve.sh
     oneshot
     seclabel u:r:recovery:s0
 
-service patchreserve-service /sbin/patchreserve-service.sh
+service patchfakepartitions-service /sbin/patchfakepartitions-service.sh
     user root
     group root
     disabled
@@ -137,9 +137,8 @@ on boot
     setprop sys.usb.config adb
     write /proc/touchpanel/gesture_enable 1
     write /sys/devices/platform/soc/c440000.qcom,spmi/spmi-0/spmi0-02/c440000.qcom,spmi:qcom,pmi8998@2:qcom,qpnp-smb2/power_supply/usb/otg_switch 1
-    chmod 0777 /sbin/patchreserve.sh
-    chmod 0777 /sbin/patchreserve-service.sh
-    start patchreserve-service
+    chmod 0777 /sbin/patchfakepartitions-service.sh
+    start patchfakepartitions-service
 
 on init
     start logd
