@@ -16,3 +16,8 @@
 
 PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/omni_fajita.mk
+
+COMMON_LUNCH_CHOICES := \
+    omni_fajita-user \
+    omni_fajita-userdebug \
+    omni_fajita-eng
